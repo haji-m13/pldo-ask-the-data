@@ -88,7 +88,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3;
 </div>
 
 <script>
-var API_KEY = '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';  // Set your Anthropic API key here, or use a proxy
+var API_KEY = '';  // Set your Anthropic API key here, or use a proxy
 
 var SYS = 'You are a financial data analyst for PLDO PT. Answer user questions concisely and accurately.\n\nKnown data:\nRevenue EUR all-time: 25.23M | EBITDA EUR all-time: -11.77M | Cash Balance: 2.40M (Jan 2026)\nBy year: 2026(Jan):0.45M rev,-0.17M ebitda | 2025:5.97M rev,-3.56M ebitda | 2024:5.95M rev,-1.92M ebitda | 2023:4.19M rev,-2.81M ebitda | 2022:3.13M rev,-2.09M ebitda | 2021:2.52M rev,-1.13M ebitda | 2020:1.28M rev,+0.17M ebitda\nEBITDA by functional area: GenAdm:+12.0M | ProdTech:-10.9M | Sales:-6.1M | Research:-2.5M | ClientOps:-2.2M | Marketing:-2.0M\nMeasures: [Revenue EUR],[EBITDA EUR],[EBITDA CCY],[Cash Balance],[Operating CF]\nDimensions: countries(Sweden,Finland,Netherlands,UK,Spain,USA), regions(Nordics,Other), areas(GenAdm,ProdTech,Marketing,Client Ops,Sales,Research)\nCutoff: Jan 31 2026\n\nRespond ONLY as valid JSON with exactly these keys: answer (string), insight (string or null), bars (array of {label,value} or null), chartLabel (string or null)';
 
