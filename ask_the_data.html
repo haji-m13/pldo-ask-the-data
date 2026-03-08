@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the Data – PLDO PT</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; height: 100vh; display: flex; flex-direction: column; font-size: 13px; }
+#hdr { padding: 10px 14px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 10px; background: #161b22; flex-shrink: 0; }
+#title { font-weight: 600; font-size: 13px; color: #e6edf3; }
+#sub { font-size: 10px; color: #484f58; font-family: monospace; }
+#dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981; margin-left: auto; }
+#msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.welcome { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 12px; text-align: center; }
+.wtitle { font-size: 20px; font-weight: 700; color: #e6edf3; }
+.wsub { color: #484f58; font-size: 11px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 460px; }
+.chip { padding: 5px 11px; border-radius: 14px; border: 1px solid #21262d; background: #161b22; color: #8b949e; font-size: 11px; cursor: pointer; transition: all .15s; }
+.chip:hover { border-color: #10b981; color: #e6edf3; background: rgba(16,185,129,.05); }
+.kpis { display: flex; gap: 10px; padding: 10px 14px; background: #161b22; border: 1px solid #21262d; border-radius: 8px; max-width: 380px; width: 100%; }
+.kpi { flex: 1; text-align: center; }
+.kv { font-size: 16px; font-weight: 700; }
+.kl { font-size: 9px; color: #484f58; font-family: monospace; text-transform: uppercase; margin-top: 2px; }
+.msg { display: flex; align-items: flex-start; gap: 7px; }
+.msg.user { justify-content: flex-end; }
+.bubble { max-width: 82%; padding: 9px 12px; border-radius: 10px; font-size: 12px; line-height: 1.55; }
+.bubble.user { background: rgba(14,165,233,.1); border: 1px solid rgba(14,165,233,.2); color: #bae6fd; }
+.bubble.ai { background: #161b22; border: 1px solid #21262d; color: #e6edf3; }
+.av { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg,#10b981,#0ea5e9); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; color: white; }
+.ans { color: #e6edf3; line-height: 1.55; margin-bottom: 5px; }
+.ins { margin-top: 7px; padding: 6px 9px; border-left: 2px solid #10b981; background: rgba(16,185,129,.05); font-size: 11px; color: #8b949e; }
+.bars { margin-top: 8px; }
+.bar-clabel { font-size: 9px; color: #484f58; font-family: monospace; text-transform: uppercase; margin-bottom: 4px; }
+.bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.bar-lbl { width: 64px; font-size: 9px; color: #8b949e; text-align: right; font-family: monospace; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-wrap { flex: 1; height: 12px; background: rgba(255,255,255,.04); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
+.bar-val { font-size: 9px; font-family: monospace; width: 64px; flex-shrink: 0; }
+@keyframes blink { 0%,100%{opacity:.25} 50%{opacity:1} }
+.loading-dots { display: flex; gap: 4px; align-items: center; padding: 2px 0; }
+.loading-dots span { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: blink 1.2s ease-in-out infinite; }
+.loading-dots span:nth-child(2) { animation-delay: .2s; }
+.loading-dots span:nth-child(3) { animation-delay: .4s; }
+#iw { padding: 10px 12px 13px; border-top: 1px solid #21262d; background: #161b22; flex-shrink: 0; }
+#ir { display: flex; gap: 6px; align-items: flex-end; background: #0d1117; border: 1px solid #21262d; border-radius: 8px; padding: 6px 9px; transition: border-color .15s; }
+#ir:focus-within { border-color: rgba(16,185,129,.4); }
+#inp { flex: 1; background: none; border: none; outline: none; color: #e6edf3; font-size: 12px; resize: none; height: 17px; line-height: 1.5; font-family: inherit; }
+#inp::placeholder { color: #30363d; }
+#btn { width: 25px; height: 25px; border-radius: 5px; border: none; background: linear-gradient(135deg,#10b981,#0ea5e9); color: #fff; cursor: pointer; font-size: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+#btn:disabled { background: #21262d; opacity: .4; cursor: default; }
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div>
+    <div id="title">✦ Ask the Data</div>
+    <div id="sub">PLDO PT · AI financial assistant</div>
+  </div>
+  <div id="dot"></div>
+</div>
+
+<div id="msgs">
+  <div class="welcome">
+    <div class="wtitle">What would you like to know?</div>
+    <div class="wsub">Ask about Revenue, EBITDA, Cash Flow, countries, functions or any period.</div>
+    <div class="chips">
+      <div class="chip">Revenue in 2025?</div>
+      <div class="chip">EBITDA by functional area</div>
+      <div class="chip">Revenue vs EBITDA by year</div>
+      <div class="chip">Current cash balance?</div>
+      <div class="chip">EBITDA margin in 2024?</div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="kv" style="color:#10b981">€25.2M</div><div class="kl">Total Revenue</div></div>
+      <div class="kpi"><div class="kv" style="color:#f87171">−€11.8M</div><div class="kl">Total EBITDA</div></div>
+      <div class="kpi"><div class="kv" style="color:#38bdf8">€2.4M</div><div class="kl">Cash Balance</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="iw">
+  <div id="ir">
+    <textarea id="inp" placeholder="Ask anything about PLDO PT..."></textarea>
+    <button id="btn">↑</button>
+  </div>
+</div>
+
+<script>
+var API_KEY = '';  // Set your Anthropic API key here, or use a proxy
+
+var SYS = 'You are a financial data analyst for PLDO PT. Answer user questions concisely and accurately.\n\nKnown data:\nRevenue EUR all-time: 25.23M | EBITDA EUR all-time: -11.77M | Cash Balance: 2.40M (Jan 2026)\nBy year: 2026(Jan):0.45M rev,-0.17M ebitda | 2025:5.97M rev,-3.56M ebitda | 2024:5.95M rev,-1.92M ebitda | 2023:4.19M rev,-2.81M ebitda | 2022:3.13M rev,-2.09M ebitda | 2021:2.52M rev,-1.13M ebitda | 2020:1.28M rev,+0.17M ebitda\nEBITDA by functional area: GenAdm:+12.0M | ProdTech:-10.9M | Sales:-6.1M | Research:-2.5M | ClientOps:-2.2M | Marketing:-2.0M\nMeasures: [Revenue EUR],[EBITDA EUR],[EBITDA CCY],[Cash Balance],[Operating CF]\nDimensions: countries(Sweden,Finland,Netherlands,UK,Spain,USA), regions(Nordics,Other), areas(GenAdm,ProdTech,Marketing,Client Ops,Sales,Research)\nCutoff: Jan 31 2026\n\nRespond ONLY as valid JSON with exactly these keys: answer (string), insight (string or null), bars (array of {label,value} or null), chartLabel (string or null)';
+
+function fmt(n) {
+  if (n == null) return '--';
+  var a = Math.abs(n), s = n < 0 ? '−' : '';
+  if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
+  if (a >= 1e3) return s + '€' + (a/1e3).toFixed(1) + 'K';
+  return s + '€' + a.toFixed(0);
+}
+
+function addMsg(role, contentEl) {
+  var w = document.getElementById('msgs');
+  var wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  if (role === 'ai') {
+    var av = document.createElement('div');
+    av.className = 'av';
+    av.textContent = '✦';
+    wrap.appendChild(av);
+  }
+  var b = document.createElement('div');
+  b.className = 'bubble ' + role;
+  if (typeof contentEl === 'string') {
+    b.innerHTML = contentEl;
+  } else {
+    b.appendChild(contentEl);
+  }
+  wrap.appendChild(b);
+  var wel = w.querySelector('.welcome');
+  if (wel) wel.remove();
+  w.appendChild(wrap);
+  w.scrollTop = w.scrollHeight;
+  return b;
+}
+
+function makeLoader() {
+  var d = document.createElement('div');
+  d.className = 'loading-dots';
+  d.innerHTML = '<span></span><span></span><span></span>';
+  return d;
+}
+
+function renderResponse(p) {
+  var frag = document.createDocumentFragment();
+
+  var ans = document.createElement('div');
+  ans.className = 'ans';
+  ans.textContent = p.answer || '';
+  frag.appendChild(ans);
+
+  if (p.bars && p.bars.length > 0) {
+    var mx = Math.max.apply(null, p.bars.map(function(b) { return Math.abs(b.value); }));
+    var barWrap = document.createElement('div');
+    barWrap.className = 'bars';
+    if (p.chartLabel) {
+      var cl = document.createElement('div');
+      cl.className = 'bar-clabel';
+      cl.textContent = p.chartLabel;
+      barWrap.appendChild(cl);
+    }
+    p.bars.forEach(function(b) {
+      var pct = mx > 0 ? (Math.abs(b.value) / mx * 100) : 0;
+      var neg = b.value < 0;
+      var row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML =
+        '<div class="bar-lbl">' + String(b.label).slice(0, 10) + '</div>' +
+        '<div class="bar-wrap"><div class="bar-fill" style="width:' + pct + '%;background:' +
+        (neg ? 'linear-gradient(90deg,#ef4444,#f87171)' : 'linear-gradient(90deg,#10b981,#34d399)') +
+        '"></div></div>' +
+        '<div class="bar-val" style="color:' + (neg ? '#f87171' : '#34d399') + '">' + fmt(b.value) + '</div>';
+      barWrap.appendChild(row);
+    });
+    frag.appendChild(barWrap);
+  }
+
+  if (p.insight) {
+    var ins = document.createElement('div');
+    ins.className = 'ins';
+    ins.textContent = p.insight;
+    frag.appendChild(ins);
+  }
+  return frag;
+}
+
+async function go(q) {
+  q = (q || '').trim();
+  if (!q) return;
+
+  var inp = document.getElementById('inp');
+  var btn = document.getElementById('btn');
+  inp.value = '';
+  inp.style.height = '17px';
+  btn.disabled = true;
+
+  addMsg('user', q);
+
+  var loaderEl = makeLoader();
+  var loaderBubble = addMsg('ai', '');
+  loaderBubble.appendChild(loaderEl);
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: SYS,
+        messages: [{ role: 'user', content: q }]
+      })
+    });
+
+    if (!resp.ok) {
+      var errData = await resp.json().catch(function() { return {}; });
+      throw new Error(errData.error && errData.error.message ? errData.error.message : 'HTTP ' + resp.status);
+    }
+
+    var data = await resp.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) || '{}';
+    var p;
+    try {
+      p = JSON.parse(raw.replace(/```json\n?|```/g, '').trim());
+    } catch(e) {
+      p = { answer: raw, insight: null, bars: null, chartLabel: null };
+    }
+
+    loaderBubble.innerHTML = '';
+    loaderBubble.appendChild(renderResponse(p));
+
+  } catch(err) {
+    loaderBubble.innerHTML = '<div style="color:#f87171">Error: ' + err.message + '</div>';
+  }
+
+  btn.disabled = false;
+  document.getElementById('msgs').scrollTop = 99999;
+}
+
+// Chip clicks
+document.querySelectorAll('.chip').forEach(function(chip) {
+  chip.addEventListener('click', function() { go(this.textContent); });
+});
+
+// Button click
+document.getElementById('btn').addEventListener('click', function() {
+  go(document.getElementById('inp').value);
+});
+
+// Enter to send
+document.getElementById('inp').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    go(this.value);
+  }
+});
+</script>
+</body>
+</html>
